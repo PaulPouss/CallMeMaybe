@@ -1,16 +1,20 @@
+"""Command-line interface: declares, parses and validates arguments."""
+
 import argparse
 from pathlib import Path
-from config import (
-    DEFAULT_INPUT,
-    DEFAULT_OUTPUT,
-    DEFAULT_FUNCTIONS,
-    DEFAULT_VERBOSE,
-    DEFAULT_MODEL,
+
+from .config import (
     AVAILABLE_MODELS,
+    DEFAULT_FUNCTIONS,
+    DEFAULT_INPUT,
+    DEFAULT_MODEL,
+    DEFAULT_OUTPUT,
+    DEFAULT_VERBOSE,
 )
 
-class Parser():
-    """Command-line interface: declares, parses and validates arguments."""
+
+class Parser:
+    """Declare, parse and validate the command-line arguments."""
 
     def __init__(self) -> None:
         """Build the underlying argparse parser once."""
@@ -60,15 +64,13 @@ class Parser():
 
     @staticmethod
     def validate_existing_file(path: Path) -> None:
-        """
-        Validate that a path exists and refers to a file.
+        """Validate that a path exists and refers to a file.
 
         Args:
             path: Path to validate.
 
         Raises:
-            ValueError: If the path does not exist or does not
-                refer to a regular file.
+            ValueError: If the path does not exist or is not a file.
         """
         if not path.exists():
             raise ValueError(f"Input file not found: {path}")
@@ -78,45 +80,36 @@ class Parser():
 
     @staticmethod
     def validate_output_file(path: Path) -> None:
-        """
-        Validate an output file path.
+        """Validate an output file path.
 
-        Ensures that the output path does not refer to an
-        existing directory and creates the parent directories
-        if they do not already exist.
+        Ensures that the output path is not an existing directory and
+        creates the parent directories if they do not exist.
 
         Args:
             path: Output file path.
 
         Raises:
-            ValueError: If the output path refers to an existing
-                directory.
+            ValueError: If the output path is an existing directory.
         """
         if path.exists() and path.is_dir():
             raise ValueError(f"Output path cannot be a directory: {path}")
 
         path.parent.mkdir(parents=True, exist_ok=True)
 
-        def parse(self, arguments: list[str] | None = None) -> argparse.Namespace:
-            """
-            Parse and validate the command-line arguments.
-            """
-            args = self._parser.parse_args(arguments)
-            try:
-                self.validate_existing_file(args.functions_definition)
-                self.validate_existing_file(args.input)
-                self.validate_output_file(args.output)
-            except ValueError as error:
-                self._parser.error(str(error))
-            return args
-
     def parse(self, arguments: list[str] | None = None) -> argparse.Namespace:
-        """Parse and validate the command-line arguments."""
+        """Parse the command line and validate the file paths.
+
+        Args:
+            arguments: Arguments to parse. Defaults to sys.argv.
+
+        Returns:
+            The parsed and validated arguments.
+
+        Raises:
+            ValueError: If an input path is unusable.
+        """
         args = self._parser.parse_args(arguments)
-        try:
-            self.validate_existing_file(args.functions_definition)
-            self.validate_existing_file(args.input)
-            self.validate_output_file(args.output)
-        except ValueError as error:
-            self._parser.error(str(error))
+        self.validate_existing_file(args.functions_definition)
+        self.validate_existing_file(args.input)
+        self.validate_output_file(args.output)
         return args

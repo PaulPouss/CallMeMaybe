@@ -13,6 +13,7 @@ class FunctionCallResult(BaseModel):
     parameters: dict[str, str | float | bool]
     pass
 
+
 class PromptInput(BaseModel):
     prompt: str
 
@@ -30,6 +31,7 @@ class PromptInput(BaseModel):
             ValueError: If the file is not valid JSON, is not a list,
                 or contains an invalid element.
         """
+
 
 class PromptGenerator:
     """Builds JSON output for a function call, token by token,
