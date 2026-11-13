@@ -6,7 +6,7 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
-from .models import FunctionDef, PromptInput
+from .models import FunctionDef, PromptInput, FunctionCallResult
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -75,3 +75,21 @@ def load_functions(path: Path) -> list[FunctionDef]:
 def load_prompts(path: Path) -> list[PromptInput]:
     """Load and validate the test prompts."""
     return _load_models(path, PromptInput)
+
+def write_results(path: Path, results: list[FunctionCallResult]) -> None:
+    """Write the function calls to a JSON file.
+
+    Args:
+        path: Output file path. Missing parent directories are created.
+        results: The function calls to write.
+
+    Raises:
+        ValueError: If the file cannot be written.
+    """
+    data = [result.model_dump() for result in results]
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as file:
+            json.dump(data, file, indent=2, ensure_ascii=False)
+    except OSError as error:
+        raise ValueError(f"Cannot write {path}: {error}") from error
