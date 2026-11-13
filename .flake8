@@ -1,0 +1,2 @@
+[flake8]
+exclude = .venv,llm_sdk,explore.py,__pycache__,.mypy_cache
