@@ -76,6 +76,7 @@ def load_prompts(path: Path) -> list[PromptInput]:
     """Load and validate the test prompts."""
     return _load_models(path, PromptInput)
 
+
 def write_results(path: Path, results: list[FunctionCallResult]) -> None:
     """Write the function calls to a JSON file.
 

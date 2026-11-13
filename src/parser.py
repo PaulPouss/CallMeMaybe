@@ -92,4 +92,3 @@ def parse_arguments(arguments: list[str] | None = None) -> CliConfig:
             for item in error.errors()
         ]
         raise ValueError("; ".join(messages)) from error
-    
