@@ -15,3 +15,5 @@ AVAILABLE_MODELS = [
     "HuggingFaceTB/SmolLM2-360M-Instruct",
     "HuggingFaceTB/SmolLM2-1.7B-Instruct",
 ]
+MAX_NUMBER_LENGTH = 24
+MAX_STRING_LENGTH = 200
