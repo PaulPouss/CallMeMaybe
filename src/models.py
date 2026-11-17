@@ -29,4 +29,4 @@ class FunctionCallResult(BaseModel):
 
     prompt: str
     name: str
-    parameters: dict[str, float | str | bool]
+    parameters: dict[str, float | str | bool | int]

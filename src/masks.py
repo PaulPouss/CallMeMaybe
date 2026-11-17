@@ -47,6 +47,16 @@ def is_number_prefix(text: str) -> bool:
     return re.fullmatch(r"-?(\d+(\.\d*)?)?", text) is not None
 
 
+def is_integer_prefix(text: str) -> bool:
+    """Return True if `text` can still grow into a valid integer."""
+    return re.fullmatch(r"-?\d*", text) is not None
+
+
+def is_complete_integer(text: str) -> bool:
+    """Return True if `text` is a finished, valid integer."""
+    return re.fullmatch(r"-?\d+", text) is not None
+
+
 def is_complete_number(text: str) -> bool:
     """Return True if `text` is a finished, valid number."""
     return re.fullmatch(r"-?\d+(\.\d+)?", text) is not None
@@ -56,15 +66,26 @@ def valid_number_token_ids(
     generated: str,
     vocab: dict[int, str],
     end_id: int,
+    integer: bool = False,
 ) -> list[int]:
-    """Return the ids of tokens that keep `generated` a valid number."""
+    """Return the ids of tokens that keep `generated` a valid number.
+
+    Args:
+        generated: Text of the number produced so far.
+        vocab: Mapping token id -> token text.
+        end_id: Id of the token that closes the value (',' or '}').
+        integer: If True, no decimal part is allowed.
+
+    Returns:
+        The ids of the allowed tokens.
+    """
+    is_prefix = is_integer_prefix if integer else is_number_prefix
+    is_complete = is_complete_integer if integer else is_complete_number
     allowed: list[int] = []
     for token_id, text in vocab.items():
-        if not text:
-            continue
-        if is_number_prefix(generated + text):
+        if text and is_prefix(generated + text):
             allowed.append(token_id)
-    if is_complete_number(generated):
+    if is_complete(generated):
         allowed.append(end_id)
     return allowed
 

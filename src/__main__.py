@@ -40,9 +40,11 @@ def main() -> int:
             result = generator.build_call(item.prompt)
         except Exception as error:
             failures += 1
-            print(f"Warning: skipped {item.prompt!r}: {error}",
+            print(f"Warning: failed on {item.prompt!r}: {error}",
                   file=sys.stderr)
-            continue
+            result = FunctionCallResult(
+                prompt=item.prompt, name="", parameters={}
+            )
         results.append(result)
         if config.verbose:
             print(result.model_dump_json())
